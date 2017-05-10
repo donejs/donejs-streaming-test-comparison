@@ -1,9 +1,13 @@
 <!doctype html>
 <script>
 (function(){
-	console.time('render')
+	console.time('render');
+	var ul;
 	function render(chunk){
 		var instr = JSON.parse(chunk);
+		var li = document.createElement("li");
+		li.textContent = instr.name;
+		ul.appendChild(li);
 	}
 
 	fetch("{{streamurl}}", {
@@ -34,5 +38,9 @@
 			console.log("An error", err);
 		})
 	});
+
+	ul = document.createElement("ul");
+	document.documentElement.appendChild(ul);
+
 })();
 </script>
