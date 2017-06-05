@@ -1,35 +1,20 @@
 (function(){
-	"use strict";
 	console.timeStamp("load");
+	var ul;
+	var streamurl = document.currentScript.dataset["streamurl"];
+	function render(chunk){
+		var instr = JSON.parse(chunk);
+		var li = document.createElement("li");
+		li.textContent = instr.name;
+		ul.appendChild(li);
+	}
 
-	var view = can.stache(`
-		<ul>
-			{{#each items}}
-				<li>{{name}}</li>
-			{{/each}}
-		</ul>
-	`);
-
-	var Item = can.DefineList.extend({
-	});
-
-	Item.List = can.DefineList.extend({});
-
-	var VM = can.DefineList.extend({
-		items: {
-			Value: Item.List
-		}
-	});
-
-	var hasRendered = false;
-
-	var vm = new VM();
-
-	fetch("/items", {
+	fetch(streamurl, {
 		credentials: "same-origin"
 	}).then(function(response){
 		var reader = response.body.getReader();
 		var decoder = new TextDecoder();
+		var hasRendered = false;
 
 		function read() {
 			return reader.read().then(function(result){
@@ -40,18 +25,17 @@
 					if(itemStr.length) {
 						if(!hasRendered) {
 							hasRendered = true;
-							console.time("render");
+							console.time('render');
 						}
 
-						var item = JSON.parse(itemStr);
-						vm.items.push(item);
+						render(itemStr);
 					}
 				});
 
 				if(!result.done) {
 					return read();
 				}
-				console.timeEnd("render");
+				console.timeEnd('render');
 				console.log("done");
 			});
 		}
@@ -59,9 +43,9 @@
 		return read().catch(function(err){
 			console.log("An error", err);
 		})
-
 	});
 
-	var frag = view(vm);
-	document.querySelector("main").appendChild(frag);
+	ul = document.createElement("ul");
+	document.documentElement.appendChild(ul);
+
 })();
