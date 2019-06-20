@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "handlebars": "^4.0.6",
-    "spdy": "^3.4.4",
-    "through2": "^2.0.3"
+    "spdy": "^4.0.0",
+    "through2": "^3.0.1"
   }
 }
